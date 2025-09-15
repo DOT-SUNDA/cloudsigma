@@ -34,7 +34,8 @@ show_menu() {
 # Pilih region terlebih dahulu
 # =========================
 show_menu
-read -p "$(echo -e ${MAGENTA}Pilih region [1-2]: ${RESET})" REGION_CHOICE
+echo -ne "${MAGENTA}Pilih region [1-2]: ${RESET}"
+read REGION_CHOICE
 
 case $REGION_CHOICE in
     1)
@@ -56,7 +57,8 @@ echo -e "${GREEN}Region dipilih: $REGION_NAME${RESET}"
 # =========================
 # Meminta input IP
 # =========================
-read -p "$(echo -e ${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET})" IPS
+echo -ne "${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET}"
+read IPS
 
 if [ -z "$IPS" ]; then
     echo -e "${RED}IP tidak boleh kosong. Keluar.${RESET}"
