@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =========================
-# Warna dan style
+# Warna dan Style
 # =========================
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -20,7 +20,7 @@ OLD_PASSWORD="Cloud2025"
 NEW_PASSWORD="Dotaja123@HHHH"
 
 # =========================
-# Fungsi clear + menu
+# Fungsi Clear + Menu
 # =========================
 show_menu() {
     clear
@@ -32,7 +32,7 @@ show_menu() {
 }
 
 # =========================
-# Loop menu terus sampai user keluar
+# Loop Menu Terus Sampai User Keluar
 # =========================
 while true; do
     show_menu
@@ -74,7 +74,7 @@ while true; do
         clear
         echo -e "${BLUE}${BOLD}Mengganti Sandi VPS $IP di region $REGION_NAME...${RESET}"
 
-        # Step 1: Ganti password (expect tanpa output)
+        # Step 1: Ganti Password (Expect Tanpa Output)
         /usr/bin/expect << EOF >/dev/null 2>&1
             set timeout 10
             spawn ssh $USER@$IP
@@ -89,7 +89,7 @@ while true; do
             expect eof
 EOF
 
-        # Step 2: Koneksi ulang dan sudo su (tanpa output)
+        # Step 2: Koneksi Ulang dan Sudo Su (Tanpa Output)
         /usr/bin/expect << EOF >/dev/null 2>&1
             set timeout 10
             spawn ssh $USER@$IP
