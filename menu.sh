@@ -23,6 +23,7 @@ NEW_PASSWORD="Dotaja123@HHHH"
 # Fungsi untuk menampilkan menu
 # =========================
 show_menu() {
+    clear
     echo -e "${CYAN}${BOLD}===== PILIH REGION =====${RESET}"
     echo -e "${YELLOW}1) Asia"
     echo -e "2) Eropa${RESET}"
@@ -30,19 +31,7 @@ show_menu() {
 }
 
 # =========================
-# Gunakan parameter yang diberikan
-# =========================
-IPS="${1:-}"
-
-if [ -z "$IPS" ]; then
-    echo -e "${RED}Usage: $0 <IP_ADDRESS>${RESET}"
-    echo -e "${YELLOW}Contoh: $0 49.157.61.51${RESET}"
-    echo -e "${YELLOW}Atau untuk multiple IP: $0 192.168.1.1,192.168.1.2,192.168.1.3${RESET}"
-    exit 1
-fi
-
-# =========================
-# Pilih region
+# Pilih region terlebih dahulu
 # =========================
 show_menu
 read -p "$(echo -e ${MAGENTA}Pilih region [1-2]: ${RESET})" REGION_CHOICE
@@ -57,13 +46,22 @@ case $REGION_CHOICE in
         REGION_NAME="Eropa"
         ;;
     *)
-        echo -e "${RED}Pilihan tidak valid. Menggunakan Asia sebagai default.${RESET}"
-        REGION_LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/asia.sh"
-        REGION_NAME="Asia"
+        echo -e "${RED}Pilihan tidak valid. Keluar.${RESET}"
+        exit 1
         ;;
 esac
 
 echo -e "${GREEN}Region dipilih: $REGION_NAME${RESET}"
+
+# =========================
+# Meminta input IP
+# =========================
+read -p "$(echo -e ${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET})" IPS
+
+if [ -z "$IPS" ]; then
+    echo -e "${RED}IP tidak boleh kosong. Keluar.${RESET}"
+    exit 1
+fi
 
 IFS=',' read -ra IP_LIST <<< "$IPS"
 
