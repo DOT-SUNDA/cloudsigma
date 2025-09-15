@@ -13,107 +13,104 @@ BOLD='\033[1m'
 RESET='\033[0m'
 
 # =========================
-# Variabel
+# Pengaturan variabel
 # =========================
 USER="cloudsigma"
 OLD_PASSWORD="Cloud2025"
 NEW_PASSWORD="Dotaja123@HHHH"
 
 # =========================
-# Fungsi Clear + Menu
+# Fungsi untuk menampilkan menu
 # =========================
 show_menu() {
-    clear
     echo -e "${CYAN}${BOLD}===== PILIH REGION =====${RESET}"
     echo -e "${YELLOW}1) Asia"
-    echo -e "2) Eropa"
-    echo -e "3) Keluar${RESET}"
+    echo -e "2) Eropa${RESET}"
     echo -e "======================="
 }
 
 # =========================
-# Loop Menu Terus Sampai User Keluar
+# Gunakan parameter yang diberikan
 # =========================
-while true; do
-    show_menu
-    read -p "$(echo -e ${MAGENTA})Pilih [1-3]: $(echo -e ${RESET})" REGION
+IPS="${1:-}"
 
-    case $REGION in
-        1)
-            LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/asia.sh"
-            REGION_NAME="Asia"
-            ;;
-        2)
-            LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/eropa.sh"
-            REGION_NAME="Eropa"
-            ;;
-        3)
-            echo -e "${GREEN}Terima kasih!${RESET}"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Pilihan tidak valid. Tekan Enter untuk mencoba lagi.${RESET}"
-            read
-            continue
-            ;;
-    esac
+if [ -z "$IPS" ]; then
+    echo -e "${RED}Usage: $0 <IP_ADDRESS>${RESET}"
+    echo -e "${YELLOW}Contoh: $0 49.157.61.51${RESET}"
+    echo -e "${YELLOW}Atau untuk multiple IP: $0 192.168.1.1,192.168.1.2,192.168.1.3${RESET}"
+    exit 1
+fi
 
+# =========================
+# Pilih region
+# =========================
+show_menu
+read -p "$(echo -e ${MAGENTA}Pilih region [1-2]: ${RESET})" REGION_CHOICE
+
+case $REGION_CHOICE in
+    1)
+        REGION_LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/asia.sh"
+        REGION_NAME="Asia"
+        ;;
+    2)
+        REGION_LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/eropa.sh"
+        REGION_NAME="Eropa"
+        ;;
+    *)
+        echo -e "${RED}Pilihan tidak valid. Menggunakan Asia sebagai default.${RESET}"
+        REGION_LINK="https://raw.githubusercontent.com/DOT-SUNDA/cloudsigma/refs/heads/main/asia.sh"
+        REGION_NAME="Asia"
+        ;;
+esac
+
+echo -e "${GREEN}Region dipilih: $REGION_NAME${RESET}"
+
+IFS=',' read -ra IP_LIST <<< "$IPS"
+
+for IP in "${IP_LIST[@]}"; do
+    echo -e "${BLUE}${BOLD}Mengganti Sandi VPS $IP di region $REGION_NAME...${RESET}"
+    
     # =========================
-    # Masukkan IP
+    # Step 1: Ganti password
     # =========================
-    read -p "$(echo -e ${MAGENTA})Masukkan IP VPS (pisah koma jika lebih dari satu): $(echo -e ${RESET})" IPS
-    if [ -z "$IPS" ]; then
-        echo -e "${RED}IP tidak boleh kosong. Tekan Enter untuk kembali ke menu.${RESET}"
-        read
-        continue
-    fi
-
-    IFS=',' read -ra IP_LIST <<< "$IPS"
-
-    for IP in "${IP_LIST[@]}"; do
-        clear
-        echo -e "${BLUE}${BOLD}Mengganti Sandi VPS $IP di region $REGION_NAME...${RESET}"
-
-        # Step 1: Ganti Password (Expect Tanpa Output)
-        /usr/bin/expect << EOF >/dev/null 2>&1
-            set timeout 10
-            spawn ssh $USER@$IP
-            expect {
-                "yes/no" { send "yes\r"; exp_continue }
-                "password:" { send "$OLD_PASSWORD\r" }
-            }
-            expect "Your password has expired. You must change your password now and login again!"
-            expect "Current password:" { send "$OLD_PASSWORD\r" }
-            expect "New password:" { send "$NEW_PASSWORD\r" }
-            expect "Retype new password:" { send "$NEW_PASSWORD\r" }
-            expect eof
+    /usr/bin/expect << EOF
+        set timeout 10
+        spawn ssh $USER@$IP
+        expect {
+            "yes/no" { send "yes\r"; exp_continue }
+            "password:" { send "$OLD_PASSWORD\r" }
+        }
+        expect "Your password has expired. You must change your password now and login again!"
+        expect "Current password:" { send "$OLD_PASSWORD\r" }
+        expect "New password:" { send "$NEW_PASSWORD\r" }
+        expect "Retype new password:" { send "$NEW_PASSWORD\r" }
+        expect eof
 EOF
 
-        # Step 2: Koneksi Ulang dan Sudo Su (Tanpa Output)
-        /usr/bin/expect << EOF >/dev/null 2>&1
-            set timeout 10
-            spawn ssh $USER@$IP
-            expect {
-                "yes/no" { send "yes\r"; exp_continue }
-                "password:" { send "$NEW_PASSWORD\r" }
-            }
-            expect "$ "
-            send "sudo su\r"
-            expect "password for $USER:"
-            send "$NEW_PASSWORD\r"
-            expect "# "
-            send "wget -O mek $LINK && chmod +x mek && nohup ./mek > /dev/null 2>&1 &\r"
-            expect "# "
-            send "exit\r"
-            expect "$ "
-            send "exit\r"
-            expect eof
+    echo -e "${CYAN}Koneksi ulang ke $IP dengan password baru dan sudo su...${RESET}"
+    
+    # =========================
+    # Step 2: Koneksi ulang dan sudo su
+    # =========================
+    /usr/bin/expect << EOF
+        set timeout 10
+        spawn ssh $USER@$IP
+        expect {
+            "yes/no" { send "yes\r"; exp_continue }
+            "password:" { send "$NEW_PASSWORD\r" }
+        }
+        expect "$ "
+        send "sudo su\r"
+        expect "password for $USER:"
+        send "$NEW_PASSWORD\r"
+        expect "# "
+        send "wget -O mek $REGION_LINK && chmod +x mek && nohup ./mek > /dev/null 2>&1 &\r"
+        expect "# "
+        send "exit\r"
+        expect "$ "
+        send "exit\r"
+        expect eof
 EOF
 
-        echo -e "${GREEN}Selesai untuk VPS $IP!${RESET}"
-        sleep 1
-    done
-
-    echo -e "${CYAN}Tekan Enter untuk kembali ke menu utama...${RESET}"
-    read
+    echo -e "${GREEN}Selesai untuk VPS $IP!${RESET}"
 done
