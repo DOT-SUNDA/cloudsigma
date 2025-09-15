@@ -6,9 +6,9 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[1;34m'
-CYAN='\033[1;36m'
-MAGENTA='\033[1;35m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
@@ -36,7 +36,7 @@ show_menu() {
 # =========================
 while true; do
     show_menu
-    read -p "${MAGENTA}Pilih [1-3]: ${RESET}" REGION
+    read -p "$(echo -e ${MAGENTA})Pilih [1-3]: $(echo -e ${RESET})" REGION
 
     case $REGION in
         1)
@@ -61,7 +61,7 @@ while true; do
     # =========================
     # Masukkan IP
     # =========================
-    read -p "${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET}" IPS
+    read -p "$(echo -e ${MAGENTA})Masukkan IP VPS (pisah koma jika lebih dari satu): $(echo -e ${RESET})" IPS
     if [ -z "$IPS" ]; then
         echo -e "${RED}IP tidak boleh kosong. Tekan Enter untuk kembali ke menu.${RESET}"
         read
