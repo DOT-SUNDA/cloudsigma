@@ -26,15 +26,17 @@ show_menu() {
     clear
     echo -e "${CYAN}${BOLD}===== PILIH REGION =====${RESET}"
     echo -e "${YELLOW}1) Asia"
-    echo -e "2) Eropa${RESET}"
-    echo -e "3) Keluar"
+    echo -e "2) Eropa"
+    echo -e "3) Keluar${RESET}"
     echo -e "======================="
 }
 
+# =========================
 # Loop menu terus sampai user keluar
+# =========================
 while true; do
     show_menu
-    read -p "$(echo -e ${MAGENTA}Pilih [1-3]: ${RESET})" REGION
+    read -p "${MAGENTA}Pilih [1-3]: ${RESET}" REGION
 
     case $REGION in
         1)
@@ -56,8 +58,10 @@ while true; do
             ;;
     esac
 
-    # Input IP
-    read -p "$(echo -e ${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET})" IPS
+    # =========================
+    # Masukkan IP
+    # =========================
+    read -p "${MAGENTA}Masukkan IP VPS (pisah koma jika lebih dari satu): ${RESET}" IPS
     if [ -z "$IPS" ]; then
         echo -e "${RED}IP tidak boleh kosong. Tekan Enter untuk kembali ke menu.${RESET}"
         read
