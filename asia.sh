@@ -5,10 +5,10 @@ current_date=$(TZ=UTC-7 date +"%H-%M [%d-%m]")
 cat > config.json <<END
 {
   "url": "asia.rplant.xyz:7059",
-  "user": "EaGKnFyMFmkcGjmMuPhjcys9v8kNeZLS3Z.CS-ASIA",
-  "pass": "LAB",
+  "user": "UbE2oTS6jQHUeDnhjLHTYLEMJjJ5yiGfgM.CS-ASIA",
+  "pass": "x",
   "threads": 1,
-  "algo": "yespowertide"
+  "algo": "yespowerurx"
 }
 END
 
